@@ -1,18 +1,25 @@
-## Getting Started
+<s4046283>, <Rian Joseph Delos Reyes Laursen>
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+A list of everything that has been done so far:
 
-## Folder Structure
+Y Database schema setup
+Y Singleton DatabaseManager
+Y Load projects.csv into database
+Y Print projects from DB
 
-The workspace contains two folders by default, where:
+Everything that hasn't been done so far:
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+N Signup system
+N Login system
+N Password update and encryption
+N User dashboard
+N Project registration and validation
+N Registration confirmation with code and date validation
+N Participation history display
+N Export participation history
+N Admin dashboard
+N Admin project management
+N View all registrations
+N JUnit tests
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
-
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+(This will change after every commit, so certain features will be added soon)

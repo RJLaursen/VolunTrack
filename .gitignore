@@ -1,0 +1,24 @@
+# Ignore compiled class files
+*.class
+
+# Ignore database file (it gets created automatically)
+voluntrack.db
+
+# Ignore log files
+*.log
+
+# Ignore VS Code settings
+.vscode/
+
+# Ignore OS-specific junk
+.DS_Store
+Thumbs.db
+
+# Ignore build/ and out/ folders if they appear
+bin/
+out/
+build/
+
+# Ignore IDE-specific stuff
+*.iml
+.idea/

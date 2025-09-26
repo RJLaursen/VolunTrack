@@ -6,16 +6,16 @@ Y Database schema setup
 Y Singleton DatabaseManager
 Y Load projects.csv into database
 Y Print projects from DB
+Y Signup system
+Y Login system
+Y Password update and encryption
+Y User dashboard
+Y Project registration and validation
+Y Registration confirmation with code and date validation
+Y Participation history display
 
 Everything that hasn't been done so far:
 
-N Signup system
-N Login system
-N Password update and encryption
-N User dashboard
-N Project registration and validation
-N Registration confirmation with code and date validation
-N Participation history display
 N Export participation history
 N Admin dashboard
 N Admin project management

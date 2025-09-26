@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controller.SignupController"
+            prefWidth="400" prefHeight="350">
+    <children>
+        <VBox spacing="10" alignment="CENTER" layoutX="50" layoutY="20" prefWidth="300">
+            <Label text="Create Account" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+            
+            <TextField fx:id="fullNameField" promptText="Full Name"/>
+            <TextField fx:id="usernameField" promptText="Username"/>
+            <TextField fx:id="emailField" promptText="Email"/>
+            <PasswordField fx:id="passwordField" promptText="Password"/>
+            
+            <Button text="Signup" onAction="#handleSignup"/>
+            <Button text="Back to Login" onAction="#goToLogin"/>
+            
+            <Label fx:id="messageLabel" textFill="red"/>
+        </VBox>
+    </children>
+</AnchorPane>

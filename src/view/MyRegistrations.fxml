@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controller.MyRegistrationsController"
+            prefWidth="600" prefHeight="400">
+    <children>
+        <VBox spacing="10" alignment="CENTER" prefWidth="600" prefHeight="400">
+            <Label text="My Registrations" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+            <TableView fx:id="regTable" prefWidth="550" prefHeight="300">
+                <columns>
+                    <TableColumn fx:id="projectCol" text="Project" prefWidth="150"/>
+                    <TableColumn fx:id="dayCol" text="Day" prefWidth="100"/>
+                    <TableColumn fx:id="slotsCol" text="Slots" prefWidth="80"/>
+                    <TableColumn fx:id="hoursCol" text="Hours" prefWidth="80"/>
+                    <TableColumn fx:id="contributionCol" text="Contribution" prefWidth="100"/>
+                    <TableColumn fx:id="dateCol" text="Confirmed At" prefWidth="150"/>
+                </columns>
+            </TableView>
+
+            <HBox spacing="10" alignment="CENTER">
+                <Button text="Back to Dashboard" onAction="#goBack"/>
+            </HBox>
+        </VBox>
+    </children>
+</AnchorPane>

@@ -14,6 +14,9 @@ import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 //Controller for the "My Registrations" screen
 //Displays all projects the logged in user has registered for
 
@@ -45,7 +48,7 @@ public class MyRegistrationsController {
         loadRegistrations();
     }
 
-    //oad all registrations for the currently logged in user
+    //Load all registrations for the currently logged in user
     //Queries the database and populates the Table View
 
     private void loadRegistrations() {
@@ -94,5 +97,46 @@ public class MyRegistrationsController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    private void exportToCSV() {
+        if (regList.isEmpty()) {
+            messageAlert("No registrations to export.");
+            return;
+        }
+
+    String username = Session.getCurrentUser().getUsername();
+    String fileName = "registrations_" + username + ".csv";
+
+    try (FileWriter writer = new FileWriter(fileName)) {
+        //Write header row
+        writer.append("ProjectID,Slots,Hours,Contribution,ConfirmedAt\n");
+
+        //Write the registrations
+        for (Registration r : regList) {
+            writer.append(r.getProjectId() + ",")
+                  .append(r.getSlots() + ",")
+                  .append(r.getHours() + ",")
+                  .append(r.getContribution() + ",")
+                  .append(r.getConfirmedAt().toString())
+                  .append("\n");
+        }
+
+            writer.flush();
+            messageAlert("Exported to " + fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+            messageAlert("Failed to export file.");
+        }
+    }
+
+    //Simple popup alert for messages.
+    private void messageAlert(String msg) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Export");
+        alert.setHeaderText(null);
+        alert.setContentText(msg);
+        alert.showAndWait();
     }
 }

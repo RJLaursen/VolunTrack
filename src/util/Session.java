@@ -2,9 +2,7 @@ package util;
 
 import model.User;
 
-/**
- * Simple session utility to store the currently logged-in user.
- */
+//Simple session utility to store the currently logged in user
 public class Session {
     private static User currentUser;
 

@@ -25,6 +25,7 @@ public class DashboardController {
     @FXML private TableColumn<Project, String> valueCol;
 
     @FXML private Label messageLabel;
+    @FXML private Label welcomeLabel;
 
 
     private ObservableList<Project> projectList = FXCollections.observableArrayList();
@@ -33,6 +34,9 @@ public class DashboardController {
     //Runs when Dashboard is loaded
     @FXML
     public void initialize() {
+        if (util.Session.getCurrentUser() != null) {
+        welcomeLabel.setText("Welcome, " + util.Session.getCurrentUser().getUsername() + "!");
+        }
         //Bind each column in the table to fields in the Project model
 
         titleCol.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getTitle()));
@@ -99,46 +103,45 @@ public class DashboardController {
     //Inserts a new record into the "registrations" table
     @FXML
     private void handleRegister() {
-    Project selected = projectTable.getSelectionModel().getSelectedItem();
-    if (selected == null) {
-        messageLabel.setText("Please select a project.");
-        return;
-    }
+        Project selected = projectTable.getSelectionModel().getSelectedItem();
+            if (selected == null) {
+            messageLabel.setText("Please select a project.");
+            return;
+        }
 
-    if (selected.getRegisteredSlots() >= selected.getTotalSlots()) {
-        messageLabel.setText("This project is full!");
-        return;
-    }
+            if (selected.getRegisteredSlots() >= selected.getTotalSlots()) {
+            messageLabel.setText("This project is full!");
+            return;
+        }
 
-    try {
+        try {
         Connection conn = DatabaseManager.getInstance().getConnection();
 
-        //Insert into registrations table
+            //Insert into registrations table
+            PreparedStatement stmt = conn.prepareStatement(
+                "INSERT INTO registrations (user_id, project_id, slots, hours, contribution, confirmed_at) " +
+                "VALUES (?, ?, ?, ?, ?, datetime('now'))"
+            );
+            stmt.setInt(1, util.Session.getCurrentUser().getId());
+            stmt.setInt(2, selected.getId());
+            stmt.setInt(3, 1);  //Default 1 slot
+            stmt.setInt(4, 2);  //Default 2 hours
+            stmt.setDouble(5, selected.getHourlyValue() * 2); //Contribution = hourly x hours
+            stmt.executeUpdate();
 
-        PreparedStatement stmt = conn.prepareStatement(
-            "INSERT INTO registrations (user_id, project_id, slots, hours, contribution, confirmed_at) " +
-            "VALUES (?, ?, ?, ?, ?, datetime('now'))"
-        );
-        stmt.setInt(1, util.Session.getCurrentUser().getId());
-        stmt.setInt(2, selected.getId());
-        stmt.setInt(3, 1);  //Default 1 slot
-        stmt.setInt(4, 2);  //Default 2 hours
-        stmt.setDouble(5, selected.getHourlyValue() * 2); //Contribution = hourly x hours
-        stmt.executeUpdate();
+            //Update project’s registered slots
+            PreparedStatement update = conn.prepareStatement(
+                "UPDATE projects SET registered_slots = registered_slots + 1 WHERE id = ?"
+            );
+            update.setInt(1, selected.getId());
+            update.executeUpdate();
 
-        //Update project’s registered slots
-        PreparedStatement update = conn.prepareStatement(
-            "UPDATE projects SET registered_slots = registered_slots + 1 WHERE id = ?"
-        );
-        update.setInt(1, selected.getId());
-        update.executeUpdate();
-
-        messageLabel.setText("Registered for project: " + selected.getTitle());
-        loadProjectsFromDB(); //Refresh table
-    } catch (Exception e) {
-        e.printStackTrace();
-        messageLabel.setText("Error registering for project.");
-    }
+            messageLabel.setText("Registered for project: " + selected.getTitle());
+            loadProjectsFromDB(); //Refresh table
+        } catch (Exception e) {
+            e.printStackTrace();
+            messageLabel.setText("Error registering for project.");
+        }
     }
 
     //Switch to the "My Registrations" screen (triggers when you click the "My Registrations" button)
@@ -147,4 +150,10 @@ public class DashboardController {
         switchScene("/view/MyRegistrations.fxml", "VolunTrack - My Registrations");
     }
 
+
+    //Navigate to Update Password screen.
+    @FXML
+    private void goToUpdatePassword() {
+        switchScene("/view/UpdatePassword.fxml", "VolunTrack - Update Password");
+    }
 }

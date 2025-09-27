@@ -13,10 +13,10 @@ Y User dashboard
 Y Project registration and validation
 Y Registration confirmation with code and date validation
 Y Participation history display
+Y Export participation history
 
 Everything that hasn't been done so far:
 
-N Export participation history
 N Admin dashboard
 N Admin project management
 N View all registrations

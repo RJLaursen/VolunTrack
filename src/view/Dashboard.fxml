@@ -8,6 +8,8 @@
             prefWidth="600" prefHeight="400">
     <children>
         <VBox spacing="10" alignment="CENTER" prefWidth="600" prefHeight="400">
+            <Label fx:id="welcomeLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+            
             <Label text="Available Projects" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
 
             <TableView fx:id="projectTable" prefWidth="550" prefHeight="300">
@@ -24,6 +26,7 @@
                     <Button text="Register" onAction="#handleRegister"/>
                     <Button text="Logout" onAction="#handleLogout"/>
                     <Button text="My Registrations" onAction="#goToMyRegistrations"/>
+                    <Button text="Update Password" onAction="#goToUpdatePassword"/>
                 </HBox>
 
             <Label fx:id="messageLabel" textFill="green"/>

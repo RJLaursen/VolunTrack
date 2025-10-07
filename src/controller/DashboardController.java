@@ -7,15 +7,15 @@ import javafx.collections.ObservableList;
 
 import model.DatabaseManager;
 import model.Project;
+import model.RegistrationDAO;
+import util.Session;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
 //Controller for the Dashboard screen
-//Displays projects in a Table View
-
+//Displays projects and allows user registration for available ones
 public class DashboardController {
     @FXML private TableView<Project> projectTable;
     @FXML private TableColumn<Project, String> titleCol;
@@ -27,18 +27,16 @@ public class DashboardController {
     @FXML private Label messageLabel;
     @FXML private Label welcomeLabel;
 
-
     private ObservableList<Project> projectList = FXCollections.observableArrayList();
 
-    //Populate the Projects table with data from the database
-    //Runs when Dashboard is loaded
+    //Initialize the Dashboard screen and populate project data
     @FXML
     public void initialize() {
-        if (util.Session.getCurrentUser() != null) {
-        welcomeLabel.setText("Welcome, " + util.Session.getCurrentUser().getUsername() + "!");
+        if (Session.getCurrentUser() != null) {
+            welcomeLabel.setText("Welcome, " + Session.getCurrentUser().getUsername() + "!");
         }
-        //Bind each column in the table to fields in the Project model
 
+        //Bind table columns to Project model properties
         titleCol.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getTitle()));
         locationCol.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getLocation()));
         dayCol.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getDay()));
@@ -49,10 +47,11 @@ public class DashboardController {
                 "$" + data.getValue().getHourlyValue()
         ));
 
-        //Load projects from the database
+        //Load projects from database
         loadProjectsFromDB();
     }
 
+    //Loads all available projects from the database
     private void loadProjectsFromDB() {
         try {
             Connection conn = DatabaseManager.getInstance().getConnection();
@@ -62,14 +61,14 @@ public class DashboardController {
             projectList.clear();
             while (rs.next()) {
                 Project p = new Project(
-                    rs.getInt("id"),
-                    rs.getString("title"),
-                    rs.getString("location"),
-                    rs.getString("day"),
-                    rs.getDouble("hourly_value"),
-                    rs.getInt("total_slots"),
-                    rs.getInt("registered_slots"),
-                    rs.getBoolean("is_enabled")
+                        rs.getInt("id"),
+                        rs.getString("title"),
+                        rs.getString("location"),
+                        rs.getString("day"),
+                        rs.getDouble("hourly_value"),
+                        rs.getInt("total_slots"),
+                        rs.getInt("registered_slots"),
+                        rs.getBoolean("is_enabled")
                 );
                 projectList.add(p);
             }
@@ -82,11 +81,65 @@ public class DashboardController {
         }
     }
 
+    //Handles registration when user clicks the "Register" button
+    @FXML
+    private void handleRegister() {
+        Project selected = projectTable.getSelectionModel().getSelectedItem();
+
+        //Ensure a project is selected
+        if (selected == null) {
+            messageLabel.setText("Please select a project.");
+            return;
+        }
+
+        //Check if the project still has available slots
+        if (selected.getRegisteredSlots() >= selected.getTotalSlots()) {
+            messageLabel.setText("This project is full!");
+            return;
+        }
+
+        //Default registration values (can be expanded later)
+        int slots = 1;
+        int hours = 2;
+        double contribution = selected.getHourlyValue() * hours;
+
+        //Use DAO to perform the registration (keeps MVC separation clean)
+        boolean success = RegistrationDAO.addRegistration(
+                Session.getCurrentUser().getId(),
+                selected.getId(),
+                slots,
+                hours,
+                contribution
+        );
+
+        if (success) {
+            messageLabel.setText("Registered for project: " + selected.getTitle());
+            loadProjectsFromDB(); //Refresh table data
+        } else {
+            messageLabel.setText("You have already registered for this project.");
+        }
+
+    }
+
+    //Switch to the My Registrations screen
+    @FXML
+    private void goToMyRegistrations() {
+        switchScene("/view/MyRegistrations.fxml", "VolunTrack - My Registrations");
+    }
+
+    //Navigate to Update Password screen
+    @FXML
+    private void goToUpdatePassword() {
+        switchScene("/view/UpdatePassword.fxml", "VolunTrack - Update Password");
+    }
+
+    //Logout and return to the Login screen
     @FXML
     private void handleLogout() {
         switchScene("/view/LoginView.fxml", "VolunTrack - Login");
     }
 
+    //Generic method for switching between scenes
     private void switchScene(String fxmlPath, String title) {
         try {
             javafx.stage.Stage stage = (javafx.stage.Stage) projectTable.getScene().getWindow();
@@ -97,63 +150,5 @@ public class DashboardController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    //Register the current user for the selected project
-    //Inserts a new record into the "registrations" table
-    @FXML
-    private void handleRegister() {
-        Project selected = projectTable.getSelectionModel().getSelectedItem();
-            if (selected == null) {
-            messageLabel.setText("Please select a project.");
-            return;
-        }
-
-            if (selected.getRegisteredSlots() >= selected.getTotalSlots()) {
-            messageLabel.setText("This project is full!");
-            return;
-        }
-
-        try {
-        Connection conn = DatabaseManager.getInstance().getConnection();
-
-            //Insert into registrations table
-            PreparedStatement stmt = conn.prepareStatement(
-                "INSERT INTO registrations (user_id, project_id, slots, hours, contribution, confirmed_at) " +
-                "VALUES (?, ?, ?, ?, ?, datetime('now'))"
-            );
-            stmt.setInt(1, util.Session.getCurrentUser().getId());
-            stmt.setInt(2, selected.getId());
-            stmt.setInt(3, 1);  //Default 1 slot
-            stmt.setInt(4, 2);  //Default 2 hours
-            stmt.setDouble(5, selected.getHourlyValue() * 2); //Contribution = hourly x hours
-            stmt.executeUpdate();
-
-            //Update project’s registered slots
-            PreparedStatement update = conn.prepareStatement(
-                "UPDATE projects SET registered_slots = registered_slots + 1 WHERE id = ?"
-            );
-            update.setInt(1, selected.getId());
-            update.executeUpdate();
-
-            messageLabel.setText("Registered for project: " + selected.getTitle());
-            loadProjectsFromDB(); //Refresh table
-        } catch (Exception e) {
-            e.printStackTrace();
-            messageLabel.setText("Error registering for project.");
-        }
-    }
-
-    //Switch to the "My Registrations" screen (triggers when you click the "My Registrations" button)
-    @FXML
-    private void goToMyRegistrations() {
-        switchScene("/view/MyRegistrations.fxml", "VolunTrack - My Registrations");
-    }
-
-
-    //Navigate to Update Password screen.
-    @FXML
-    private void goToUpdatePassword() {
-        switchScene("/view/UpdatePassword.fxml", "VolunTrack - Update Password");
     }
 }

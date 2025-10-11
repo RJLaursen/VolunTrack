@@ -1,24 +1,32 @@
 package util;
 
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 //Utility class for password hashing and validation
 //Utilizes SHA-256 hashing algorithm for secure storage (opted to use SHA-256 because I used this before on other projects)
 public class PasswordUtility {
-    
-    //Hash a plain text password using SHA-256
+
+    //Hashes a password using SHA-256
     public static String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hashedBytes = md.digest(password.getBytes());
+            byte[] hashBytes = md.digest(password.getBytes());
             StringBuilder sb = new StringBuilder();
-            for (byte b : hashedBytes) {
-                sb.append(String.format("%02x", b)); //Convert to hex
+            for (byte b : hashBytes) {
+                sb.append(String.format("%02x", b));
             }
             return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Error: SHA-256 not available.", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error hashing password", e);
         }
+    }
+
+    //Validates password strength
+    public static boolean isStrongPassword(String password) {
+        if (password == null) return false;
+        if (password.length() < 8) return false;
+        if (!password.matches(".*[A-Z].*")) return false;
+        if (!password.matches(".*[0-9].*")) return false;
+        if (!password.matches(".*[!@#$%^&*(),.?\":{}|<>].*")) return false;
+        return true;
     }
 }

@@ -101,9 +101,14 @@ public class UserDirectAccessObject {
         }
     }
 
-    //Check if a password meets security requirements (at least 6 characters)
+    //Validates that a password meets security requirements
     public static boolean isValidPassword(String password) {
-        return password != null && password.length() >= 6;
-    }
+        if (password == null || password.length() < 8) return false;
 
+        boolean hasUppercase = password.matches(".*[A-Z].*");
+        boolean hasDigit = password.matches(".*[0-9].*");
+        boolean hasSpecial = password.matches(".*[!@#$%^&*(),.?\":{}|<>].*");
+
+        return hasUppercase && hasDigit && hasSpecial;
+    }
 }

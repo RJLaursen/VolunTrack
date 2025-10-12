@@ -23,6 +23,7 @@
 
             <HBox spacing="10" alignment="CENTER">
                 <Button text="Back to Dashboard" onAction="#goBack"/>
+                <Button text="Cancel Registration" onAction="#cancelRegistration"/>
                 <Button text="Export to CSV" onAction="#exportToCSV"/>
             </HBox>
         </VBox>

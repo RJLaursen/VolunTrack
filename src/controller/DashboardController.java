@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import model.DatabaseManager;
 import model.Project;
 import model.RegistrationDAO;
+import util.CartManager;
 import util.Session;
 
 import java.sql.Connection;
@@ -86,39 +87,36 @@ public class DashboardController {
     private void handleRegister() {
         Project selected = projectTable.getSelectionModel().getSelectedItem();
 
-        //Ensure a project is selected
         if (selected == null) {
-            messageLabel.setText("Please select a project.");
+            messageLabel.setText("⚠ Please select a project.");
             return;
         }
 
-        //Check if the project still has available slots
         if (selected.getRegisteredSlots() >= selected.getTotalSlots()) {
-            messageLabel.setText("This project is full!");
+            messageLabel.setText("⚠ This project is full!");
             return;
         }
 
-        //Default registration values (can be expanded later)
-        int slots = 1;
-        int hours = 2;
-        double contribution = selected.getHourlyValue() * hours;
-
-        //Use DAO to perform the registration (keeps MVC separation clean)
-        boolean success = RegistrationDAO.addRegistration(
-                Session.getCurrentUser().getId(),
-                selected.getId(),
-                slots,
-                hours,
-                contribution
-        );
-
-        if (success) {
-            messageLabel.setText("Registered for project: " + selected.getTitle());
-            loadProjectsFromDB(); //Refresh table data
-        } else {
-            messageLabel.setText("You have already registered for this project.");
+        //Check if the project is already in the cart
+        if (CartManager.getCartItems().contains(selected)) {
+            messageLabel.setText("⚠ Project is already in your cart!");
+            return;
         }
 
+        //Add project to the in memory cart only (no DB write yet)
+        CartManager.addToCart(selected);
+        messageLabel.setText("✅ " + selected.getTitle() + " added to cart!");
+
+        //Quick visual feedback
+        messageLabel.setStyle("-fx-text-fill: green; -fx-font-weight: bold;");
+    }
+
+
+    //Refresh project list in Dashboard
+    @FXML
+    private void refreshProjects() {
+        loadProjectsFromDB();
+        messageLabel.setText("✅ Project list refreshed!");
     }
 
     //Switch to the My Registrations screen
@@ -138,6 +136,13 @@ public class DashboardController {
     private void handleLogout() {
         switchScene("/view/LoginView.fxml", "VolunTrack - Login");
     }
+
+    //Navigate to Cart Screen
+    @FXML
+    private void goToCart() {
+        switchScene("/view/Cart.fxml", "VolunTrack - Cart");
+    }
+
 
     //Generic method for switching between scenes
     private void switchScene(String fxmlPath, String title) {

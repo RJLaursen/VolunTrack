@@ -24,7 +24,9 @@
 
                 <HBox spacing="10" alignment="CENTER">
                     <Button text="Register" onAction="#handleRegister"/>
+                    <Button text="Refresh Projects" onAction="#refreshProjects"/>
                     <Button text="Logout" onAction="#handleLogout"/>
+                    <Button text="View Cart" onAction="#goToCart"/>
                     <Button text="My Registrations" onAction="#goToMyRegistrations"/>
                     <Button text="Update Password" onAction="#goToUpdatePassword"/>
                 </HBox>

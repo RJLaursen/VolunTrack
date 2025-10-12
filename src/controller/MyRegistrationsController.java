@@ -9,6 +9,7 @@ import model.Registration;
 import util.Session;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDateTime;
@@ -99,6 +100,55 @@ public class MyRegistrationsController {
         }
     }
 
+    //Cancel existing registrations
+    @FXML
+    private void cancelRegistration() {
+        Registration selected = regTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            messageAlert("Please select a registration to cancel.");
+            return;
+        }
+
+    //Confirm with the user first
+    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Confirm Cancellation");
+        confirm.setHeaderText("Cancel this registration?");
+        confirm.setContentText("Project ID: " + selected.getProjectId() +
+                               "\nContribution: $" + selected.getContribution());
+    
+        if (confirm.showAndWait().get() != ButtonType.OK) {
+            return;
+        }
+
+    try (Connection conn = model.DatabaseManager.getInstance().getConnection()) {
+        
+        //Delete registration from the table
+        PreparedStatement del = conn.prepareStatement("DELETE FROM registrations WHERE id = ?");
+        del.setInt(1, selected.getId());
+        int rows = del.executeUpdate();
+
+        if (rows > 0) {
+            //Decrease registered_slots in the related project
+            PreparedStatement update = conn.prepareStatement(
+                "UPDATE projects SET registered_slots = registered_slots - ? WHERE id = ?"
+            );
+                update.setInt(1, selected.getSlots());
+                update.setInt(2, selected.getProjectId());
+                update.executeUpdate();
+
+                messageAlert("Registration canceled successfully.");
+                loadRegistrations(); //Refresh table
+            } else {
+                messageAlert("Failed to cancel registration.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            messageAlert("Database error while canceling.");
+        }
+    }
+
+    //Export registration as a CSV file
     @FXML
     private void exportToCSV() {
         if (regList.isEmpty()) {
@@ -131,7 +181,7 @@ public class MyRegistrationsController {
         }
     }
 
-    //Simple popup alert for messages.
+    //Simple popup alert for messages
     private void messageAlert(String msg) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Export");

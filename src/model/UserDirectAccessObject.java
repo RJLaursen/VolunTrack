@@ -41,6 +41,7 @@ public class UserDirectAccessObject {
             e.printStackTrace();
             return false;
         }
+
     }
 
     //Attempts login with username and plain password

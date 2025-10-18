@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controller.AdminDashboardController"
+            prefWidth="900" prefHeight="600">
+
+    <top>
+        <ToolBar>
+            <Label text="VolunTrack - Admin Dashboard" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+            <Pane prefWidth="20"/>
+            <Button text="Add Project" onAction="#onAddProject"/>
+            <Button text="Edit Selected" onAction="#onEditSelected"/>
+            <Button text="Delete Selected" onAction="#onDeleteSelected"/>
+            <Button text="Enable/Disable" onAction="#onToggleEnabled"/>
+            <Button text="View All Registrations" onAction="#onViewAllRegistrations"/>
+            <Button text="Refresh" onAction="#onRefresh"/>
+            <Pane HBox.hgrow="ALWAYS"/>
+            <Button text="Logout" onAction="#onLogout"/>
+        </ToolBar>
+    </top>
+
+    <left>
+        <VBox spacing="8" style="-fx-padding: 10;">
+            <Label text="Project Titles" style="-fx-font-weight: bold;"/>
+            <ListView fx:id="titlesList" prefWidth="220" />
+        </VBox>
+    </left>
+
+    <center>
+        <VBox spacing="8" style="-fx-padding: 10;">
+            <Label text="Projects (group details)" style="-fx-font-weight: bold;"/>
+            <TableView fx:id="projectsTable" prefWidth="620" prefHeight="420">
+                <columns>
+                    <TableColumn fx:id="idCol" text="ID" prefWidth="50"/>
+                    <TableColumn fx:id="titleCol" text="Title" prefWidth="160"/>
+                    <TableColumn fx:id="locationCol" text="Location" prefWidth="120"/>
+                    <TableColumn fx:id="dayCol" text="Day" prefWidth="80"/>
+                    <TableColumn fx:id="hourlyCol" text="Hourly Value" prefWidth="90"/>
+                    <TableColumn fx:id="slotsCol" text="Slots (reg/total)" prefWidth="120"/>
+                    <TableColumn fx:id="enabledCol" text="Enabled" prefWidth="60"/>
+                </columns>
+            </TableView>
+            <Label fx:id="messageLabel" style="-fx-font-weight: bold;"/>
+        </VBox>
+    </center>
+
+</BorderPane>

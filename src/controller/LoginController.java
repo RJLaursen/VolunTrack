@@ -53,16 +53,23 @@ public class LoginController {
             showMessage("✅ Login successful!", "green");
 
             User loggedUser = userDAO.getUserByUsername(username);
-            Session.setCurrentUser(loggedUser);
+           Session.setCurrentUser(loggedUser);
 
-            //Short delay for user feedback before loading dashboard (just cause it looks cool)
+            //Short delay for user feedback before loading the correct dashboard
             javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(javafx.util.Duration.seconds(0.6));
-            pause.setOnFinished(e -> openDashboard());
+            pause.setOnFinished(e -> {
+                if (loggedUser != null && loggedUser.isAdmin()) {
+                    switchScene("/view/AdminDashboard.fxml", "VolunTrack - Admin Dashboard");
+                } else {
+                    openDashboard();
+                }
+            });
             pause.play();
         } else {
             showMessage("⚠ Invalid username or password.", "red");
         }
-    }
+    }   
+
 
     //Toggle password visibility (👁 button) [The eyeball]
     @FXML

@@ -1,7 +1,6 @@
 package model;
 
 //Represents a community project in the VolunTrack system
-
 public class Project {
     private int id;
     private String title;

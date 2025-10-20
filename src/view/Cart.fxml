@@ -10,15 +10,26 @@
         <VBox spacing="12" alignment="CENTER" prefWidth="650" prefHeight="420" style="-fx-padding: 15;">
             <Label text="Registration Cart" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
 
-            <TableView fx:id="cartTable" prefWidth="600" prefHeight="250">
+            <TableView fx:id="cartTable" prefWidth="550" prefHeight="300" editable="true">
                 <columns>
                     <TableColumn fx:id="titleCol" text="Title" prefWidth="150"/>
-                    <TableColumn fx:id="dayCol" text="Day" prefWidth="100"/>
+                    <TableColumn fx:id="dayCol" text="Day" prefWidth="80"/>
                     <TableColumn fx:id="slotsCol" text="Slots" prefWidth="80"/>
                     <TableColumn fx:id="hoursCol" text="Hours" prefWidth="80"/>
                     <TableColumn fx:id="valueCol" text="Hourly Value" prefWidth="100"/>
+                    <TableColumn fx:id="totalCol" text="Total" prefWidth="100"/>
                 </columns>
             </TableView>
+
+            <HBox spacing="10" alignment="CENTER">
+                <Label text="Modify selection:"/>
+                <Label text="Slots:"/>
+                <Spinner fx:id="slotsSpinner" min="1" max="3" initialValue="1"/>
+                <Label text="Hours:"/>
+                <Spinner fx:id="hoursSpinner" min="1" max="3" initialValue="2"/>
+                <Button text="Update Selection" onAction="#updateSelected"/>
+            </HBox>
+
 
             <HBox spacing="10" alignment="CENTER">
                 <Button text="Remove Selected" onAction="#removeSelected"/>
@@ -34,6 +45,7 @@
             <HBox spacing="10" alignment="CENTER">
                 <Button text="Generate Code" onAction="#generateCode"/>
                 <Button text="Confirm Registration" onAction="#confirmRegistration"/>
+                <Label fx:id="totalCartLabel" text="Total Contribution: $0.00" style="-fx-font-weight: bold; -fx-font-size: 13px;"/>
             </HBox>
 
             <Label fx:id="messageLabel" style="-fx-font-weight: bold;"/>

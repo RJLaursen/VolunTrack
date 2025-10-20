@@ -12,6 +12,10 @@ import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.format.DateTimeFormatter;
+import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 //Controller for the Admin Registrations view
 //Displays all user registrations including project details
@@ -42,8 +46,19 @@ public class AdminRegistrationsController {
         slotsCol.setCellValueFactory(d -> new javafx.beans.property.SimpleStringProperty(String.valueOf(d.getValue().slots)));
         hoursCol.setCellValueFactory(d -> new javafx.beans.property.SimpleStringProperty(String.valueOf(d.getValue().hours)));
         contribCol.setCellValueFactory(d -> new javafx.beans.property.SimpleStringProperty(String.format("$%.2f", d.getValue().contribution)));
-        timeCol.setCellValueFactory(d -> new javafx.beans.property.SimpleStringProperty(d.getValue().confirmedAt));
+        
+    DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd MMM yyyy, hh:mm a");
 
+    timeCol.setCellValueFactory(d -> {
+        try {
+            //Treat database timestamp as local time
+            LocalDateTime localDateTime = LocalDateTime.parse(d.getValue().confirmedAt.replace(" ", "T"));
+            String formatted = localDateTime.format(fmt);
+            return new javafx.beans.property.SimpleStringProperty(formatted);
+        } catch (Exception e) {
+            return new javafx.beans.property.SimpleStringProperty(d.getValue().confirmedAt);
+        }
+    });
         //Load all registrations when the screen opens
         loadAllRegistrations();
     }
@@ -79,12 +94,6 @@ public class AdminRegistrationsController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    //Close the current window
-    @FXML
-    private void onClose() {
-        ((javafx.stage.Stage) regsTable.getScene().getWindow()).close();
     }
 
     //Inner class to represent each row in the registration table

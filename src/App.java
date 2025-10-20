@@ -3,7 +3,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-//Irrelevant but wanted to add this emoji for easy copy pasting (✅)
+//Irrelevant but wanted to add this emoji for easy copy pasting (✅ ⚠)
 
 //JavaFX entry point for VolunTrack
 //Loads the login screen as the first scene

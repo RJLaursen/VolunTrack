@@ -5,17 +5,19 @@
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="controller.MyRegistrationsController"
-            prefWidth="600" prefHeight="400">
+            prefWidth="800" prefHeight="450">
     <children>
-        <VBox spacing="10" alignment="CENTER" prefWidth="600" prefHeight="400">
-            <Label text="My Registrations" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+        <VBox spacing="10" alignment="CENTER" prefWidth="800" prefHeight="450">
+            <Label text="My Registrations" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
 
-            <TableView fx:id="regTable" prefWidth="550" prefHeight="300">
+            <TableView fx:id="regTable" prefWidth="760" prefHeight="340">
                 <columns>
+                    <TableColumn fx:id="idCol" text="Reg ID" prefWidth="70"/>
                     <TableColumn fx:id="projectCol" text="Project" prefWidth="150"/>
-                    <TableColumn fx:id="dayCol" text="Day" prefWidth="100"/>
-                    <TableColumn fx:id="slotsCol" text="Slots" prefWidth="80"/>
-                    <TableColumn fx:id="hoursCol" text="Hours" prefWidth="80"/>
+                    <TableColumn fx:id="locationCol" text="Location" prefWidth="120"/>
+                    <TableColumn fx:id="dayCol" text="Day" prefWidth="80"/>
+                    <TableColumn fx:id="slotsCol" text="Slots" prefWidth="70"/>
+                    <TableColumn fx:id="hoursCol" text="Hours" prefWidth="70"/>
                     <TableColumn fx:id="contributionCol" text="Contribution" prefWidth="100"/>
                     <TableColumn fx:id="dateCol" text="Confirmed At" prefWidth="150"/>
                 </columns>

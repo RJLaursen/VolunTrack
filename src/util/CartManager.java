@@ -23,6 +23,17 @@ public class CartManager {
         cart.removeIf(p -> p.getId() == project.getId());
     }
 
+    //Updates an existing project entry in the cart list
+    public static void updateItem(Project updatedProject) {
+        for (int i = 0; i < cart.size(); i++) {
+            Project p = cart.get(i);
+            if (p.getId() == updatedProject.getId()) {
+                cart.set(i, updatedProject);
+                break;
+            }
+        }
+    }
+
     //Get all cart items
     public static List<Project> getCartItems() {
         return cart;
@@ -37,4 +48,5 @@ public class CartManager {
     public static boolean isEmpty() {
         return cart.isEmpty();
     }
+
 }

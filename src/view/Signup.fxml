@@ -27,12 +27,16 @@
             </HBox>
 
             <Label text="Password must be at least 8 chars, include uppercase, number, and special character."
-                   style="-fx-font-size: 11px; -fx-text-fill: #666;"/>
+                wrapText="true"
+                style="-fx-font-size: 11px; -fx-text-fill: #666;"/>
 
             <Button text="Signup" onAction="#handleSignup"/>
             <Button text="Back to Login" onAction="#goToLogin"/>
 
-            <Label fx:id="messageLabel" style="-fx-font-weight: bold;"/>
+            <Label fx:id="messageLabel"
+                wrapText="true"
+                maxWidth="300"
+                style="-fx-font-weight: bold; -fx-alignment: center;"/>
         </VBox>
     </children>
 </AnchorPane>

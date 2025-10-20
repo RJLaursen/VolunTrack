@@ -81,6 +81,11 @@ public class SignupController {
             return;
         }
 
+        if (!email.matches("^[\\w.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+            showMessage("⚠ Please enter a valid email address.", "red");
+            return;
+        }
+
         if (!password.equals(confirmPassword)) {
             showMessage("⚠ Passwords do not match.", "red");
             return;
@@ -109,7 +114,7 @@ public class SignupController {
     //Navigate back to Login screen
     @FXML
     private void goToLogin() {
-        switchScene("/view/LoginView.fxml", "VolunTrack - Login");
+        switchScene("/view/Login.fxml", "VolunTrack - Login");
     }
 
     //Helper to change scenes

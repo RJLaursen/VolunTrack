@@ -14,12 +14,9 @@ Y Project registration and validation
 Y Registration confirmation with code and date validation
 Y Participation history display
 Y Export participation history
+Y Admin dashboard
+Y Admin project management
+Y View all registrations
+N JUnit tests (Last thing to do)
 
-Everything that hasn't been done so far:
-
-N Admin dashboard
-N Admin project management
-N View all registrations
-N JUnit tests
-
-(This will change after every commit, so certain features will be added soon)
+(Been slacking on updating this, my bad)

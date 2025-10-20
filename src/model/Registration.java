@@ -12,6 +12,9 @@ public class Registration {
     private int hours;
     private double contribution;
     private LocalDateTime confirmedAt;
+    private String projectTitle;
+    private String projectLocation;
+    private String projectDay;
 
     //Constructor for the registration
     public Registration(int id, int userId, int projectId,
@@ -47,4 +50,13 @@ public class Registration {
 
     public LocalDateTime getConfirmedAt() { return confirmedAt; }
     public void setConfirmedAt(LocalDateTime confirmedAt) { this.confirmedAt = confirmedAt; }
+
+    public String getProjectTitle() { return projectTitle; }
+    public void setProjectTitle(String projectTitle) { this.projectTitle = projectTitle; }
+
+    public String getProjectLocation() { return projectLocation; }
+    public void setProjectLocation(String projectLocation) { this.projectLocation = projectLocation; }
+
+    public String getProjectDay() { return projectDay; }
+    public void setProjectDay(String projectDay) { this.projectDay = projectDay; }
 }

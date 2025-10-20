@@ -10,7 +10,8 @@ public class Project {
     private int totalSlots;
     private int registeredSlots;
     private boolean enabled;
-
+    private int selectedSlots = 1;
+    private int selectedHours = 1;
     
     //Constructor for the project
     public Project(int id, String title, String location, String day,
@@ -26,7 +27,6 @@ public class Project {
         this.enabled = enabled;
     }
 
-    
     //Calculates how many slots are still available   
     public int getAvailableSlots() {
         return totalSlots - registeredSlots;
@@ -56,4 +56,10 @@ public class Project {
 
     public boolean isEnabled() { return enabled; }
     public void setEnabled(boolean enabled) { this.enabled = enabled; }
+
+    public int getSelectedSlots() { return selectedSlots; }
+    public void setSelectedSlots(int slots) { this.selectedSlots = slots; }
+
+    public int getSelectedHours() { return selectedHours; }
+    public void setSelectedHours(int hours) { this.selectedHours = hours; }
 }

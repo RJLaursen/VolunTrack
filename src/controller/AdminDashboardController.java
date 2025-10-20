@@ -47,7 +47,7 @@ public class AdminDashboardController {
         titleCol.setCellValueFactory(d -> new javafx.beans.property.SimpleStringProperty(d.getValue().getTitle()));
         locationCol.setCellValueFactory(d -> new javafx.beans.property.SimpleStringProperty(d.getValue().getLocation()));
         dayCol.setCellValueFactory(d -> new javafx.beans.property.SimpleStringProperty(d.getValue().getDay()));
-        hourlyCol.setCellValueFactory(d -> new javafx.beans.property.SimpleStringProperty(String.valueOf(d.getValue().getHourlyValue())));
+        hourlyCol.setCellValueFactory(d -> new javafx.beans.property.SimpleStringProperty("$" + String.format("%.2f", d.getValue().getHourlyValue())));
         slotsCol.setCellValueFactory(d -> new javafx.beans.property.SimpleStringProperty(d.getValue().getRegisteredSlots() + "/" + d.getValue().getTotalSlots()));
         enabledCol.setCellValueFactory(d -> new javafx.beans.property.SimpleStringProperty(d.getValue().isEnabled() ? "Yes" : "No"));
 
@@ -66,7 +66,7 @@ public class AdminDashboardController {
                 if (newV != null) loadProjectsForTitle(newV);
             });
 
-            //If non-empty, select first title to show table
+            //If non empty, select first title to show table
             if (!titles.isEmpty()) {
                 titlesList.getSelectionModel().select(0);
                 loadProjectsForTitle(titles.get(0));
@@ -207,10 +207,21 @@ public class AdminDashboardController {
     @FXML
     private void onRefresh() { loadTitles(); }
 
+    //Handle Logout button (With simple confirmation system)
     @FXML
-    private void onLogout() { Session.setCurrentUser(null); switchToLogin(); }
+    private void onLogout() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Logout Confirmation");
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure you want to log out?");
+        
+        if (alert.showAndWait().get() == ButtonType.OK) {
+            Session.setCurrentUser(null);
+            switchToLogin();
+        }
+    }
 
-    //Display feedback message (with colors)
+    //Display feedback message
     private void showMessage(String text, String color) {
         messageLabel.setText(text);
         messageLabel.setStyle("-fx-text-fill: " + color + "; -fx-font-weight: bold;");
@@ -220,10 +231,17 @@ public class AdminDashboardController {
     private void switchToLogin() {
         try {
             javafx.stage.Stage stage = (javafx.stage.Stage) projectsTable.getScene().getWindow();
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/view/LoginView.fxml"));
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/view/Login.fxml"));
             javafx.scene.Scene scene = new javafx.scene.Scene(loader.load());
             stage.setScene(scene);
             stage.setTitle("VolunTrack - Login");
+
+                //Fade out transition (copy from  dashboard logout button)
+                javafx.animation.FadeTransition ft = new javafx.animation.FadeTransition(javafx.util.Duration.millis(300), scene.getRoot());
+                ft.setFromValue(0);
+                ft.setToValue(1);
+                ft.play();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -245,78 +263,94 @@ public class AdminDashboardController {
             setTitle(existing == null ? "Add Project" : "Edit Project");
             getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
-            //Input feilds
+            //Input fields
             TextField titleField = new TextField();
             TextField locationField = new TextField();
-            TextField dayField = new TextField();
+            ComboBox<String> dayCombo = new ComboBox<>();
             TextField hourlyField = new TextField();
             TextField slotsField = new TextField();
+
+            //Add all 7 days to dropdown
+            dayCombo.getItems().addAll("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun");
+            dayCombo.setEditable(false);
 
             if (existing != null) {
                 titleField.setText(existing.getTitle());
                 locationField.setText(existing.getLocation());
-                dayField.setText(existing.getDay());
+                dayCombo.setValue(existing.getDay());
                 hourlyField.setText(String.valueOf(existing.getHourlyValue()));
                 slotsField.setText(String.valueOf(existing.getTotalSlots()));
             }
 
-            //Gridpane to arrange form
+            //Layout grid
             GridPane grid = new GridPane();
             grid.setVgap(8);
             grid.setHgap(8);
             grid.addRow(0, new Label("Title:"), titleField);
             grid.addRow(1, new Label("Location:"), locationField);
-            grid.addRow(2, new Label("Day (Mon/Tue/...):"), dayField);
-            grid.addRow(3, new Label("Hourly value (1..100):"), hourlyField);
-            grid.addRow(4, new Label("Total slots (1..100):"), slotsField);
+            grid.addRow(2, new Label("Day:"), dayCombo);
+            grid.addRow(3, new Label("Hourly value (1–100):"), hourlyField);
+            grid.addRow(4, new Label("Total slots (1–100):"), slotsField);
             getDialogPane().setContent(grid);
 
             final Button okBtn = (Button) getDialogPane().lookupButton(ButtonType.OK);
-            okBtn.setDisable(false);
+            okBtn.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
+                if (!validateInput(titleField, locationField, dayCombo, hourlyField, slotsField)) {
+                    event.consume();
+                }
+            });
 
+            //Set result converter only for valid input
             setResultConverter(btn -> {
                 if (btn == ButtonType.OK) {
-                    String t = titleField.getText().trim();
-                    String l = locationField.getText().trim();
-                    String d = dayField.getText().trim();
-                    String hv = hourlyField.getText().trim();
-                    String sl = slotsField.getText().trim();
-
-                    //Validate basic text fields
-                    if (t.isEmpty() || t.length() > 30) { showAlert("Title must be 1..30 characters"); return null; }
-                    if (l.isEmpty() || l.length() > 30) { showAlert("Location must be 1..30 characters"); return null; }
-                    
-                    //Validate day input
-                    String dn = d.trim().toLowerCase();
-                    if (dn.length() < 3) { showAlert("Day must be Mon/Tue/.../Sun"); return null; }
-                    String[] allowed = {"mon","tue","wed","thu","fri","sat","sun","monday","tuesday","wednesday","thursday","friday","saturday","sunday"};
-                    boolean ok = false;
-                    for (String a : allowed) if (a.equals(dn)) { ok = true; break; }
-                    if (!ok) { showAlert("Day must be one of Mon,Tue,Wed,Thu,Fri,Sat,Sun"); return null; }
-
-                    //Validate numeric input
-                    double hourly;
-                    int totalSlots;
-                    try { hourly = Double.parseDouble(hv); } catch (Exception ex) { showAlert("Hourly value must be a number"); return null; }
-                    try { totalSlots = Integer.parseInt(sl); } catch (Exception ex) { showAlert("Total slots must be an integer"); return null; }
-
-                    //Ensure numeric values within range
-                    if (hourly < 1 || hourly > 100) { showAlert("Hourly value must be 1..100"); return null; }
-                    if (totalSlots < 1 || totalSlots > 100) { showAlert("Total slots must be 1..100"); return null; }
-
-                    //Normalize day name for consistent storage
-                    String dayNormalized = dn.length() > 3 ? dn.substring(0,3) : dn;
-                    return new FormData(t, l, dayNormalized, hourly, totalSlots);
+                    return new FormData(
+                        titleField.getText().trim(),
+                        locationField.getText().trim(),
+                        dayCombo.getValue(),
+                        Double.parseDouble(hourlyField.getText().trim()),
+                        Integer.parseInt(slotsField.getText().trim())
+                    );
                 }
-                return null;
-            });
-        }
+            return null;
+        });
+    }
 
-        //Show alert pop up for invalid input
-        private void showAlert(String text) {
-            Alert a = new Alert(Alert.AlertType.ERROR, text, ButtonType.OK);
-            a.setHeaderText("Validation error");
-            a.showAndWait();
-        }
+    // Validation logic that keeps the dialog open on error
+    private boolean validateInput(TextField title, TextField loc, ComboBox<String> day,
+                                  TextField hourly, TextField slots) {
+        String t = title.getText().trim();
+        String l = loc.getText().trim();
+        String d = day.getValue();
+        String hv = hourly.getText().trim();
+        String sl = slots.getText().trim();
+
+        if (t.isEmpty() || t.length() > 30) { showAlert("Title must be 1–30 characters."); title.clear(); return false; }
+        if (l.isEmpty() || l.length() > 30) { showAlert("Location must be 1–30 characters."); loc.clear(); return false; }
+        if (d == null) { showAlert("Please select a day."); return false; }
+
+        double hourlyVal;
+        int totalSlots;
+        try { hourlyVal = Double.parseDouble(hv); } 
+        catch (Exception e) { showAlert("Hourly value must be a number."); hourly.clear(); return false; }
+        try { totalSlots = Integer.parseInt(sl); } 
+        catch (Exception e) { showAlert("Total slots must be a whole number."); slots.clear(); return false; }
+
+        if (hourlyVal < 1 || hourlyVal > 100) { showAlert("Hourly value must be between 1 and 100."); hourly.clear(); return false; }
+        if (totalSlots < 1 || totalSlots > 100) { showAlert("Total slots must be between 1 and 100."); slots.clear(); return false; }
+
+        return true;
+    }
+
+    private void showAlert(String text) {
+        Alert a = new Alert(Alert.AlertType.WARNING, text, ButtonType.OK);
+        a.setHeaderText("Input Error");
+        a.showAndWait();
+    }
+}
+
+    //Ensures consistent Title Case (e.g., "monday" → "Monday")
+    private static String capitalizeDay(String input) {
+        if (input == null || input.isEmpty()) return "";
+        return input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();
     }
 }

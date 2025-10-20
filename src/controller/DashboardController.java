@@ -18,6 +18,8 @@ import java.sql.Statement;
 //Controller for the Dashboard screen
 //Displays projects and allows user registration for available ones
 public class DashboardController {
+
+    //FXML elements
     @FXML private TableView<Project> projectTable;
     @FXML private TableColumn<Project, String> titleCol;
     @FXML private TableColumn<Project, String> locationCol;
@@ -89,28 +91,49 @@ public class DashboardController {
 
         if (selected == null) {
             messageLabel.setText("⚠ Please select a project.");
+            messageLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
             return;
         }
 
         if (selected.getRegisteredSlots() >= selected.getTotalSlots()) {
             messageLabel.setText("⚠ This project is full!");
+            messageLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
             return;
         }
 
-        //Check if the project is already in the cart
-        if (CartManager.getCartItems().contains(selected)) {
+        try (java.sql.Connection conn = model.DatabaseManager.getInstance().getConnection()) {
+            //Check if user already registered for this project
+            java.sql.PreparedStatement check = conn.prepareStatement(
+                "SELECT COUNT(*) FROM registrations WHERE user_id = ? AND project_id = ?"
+            );
+            check.setInt(1, util.Session.getCurrentUser().getId());
+            check.setInt(2, selected.getId());
+            java.sql.ResultSet rs = check.executeQuery();
+
+            if (rs.next() && rs.getInt(1) > 0) {
+                messageLabel.setText("⚠ You’re already registered for " + selected.getTitle() + "!");
+                messageLabel.setStyle("-fx-text-fill: orange; -fx-font-weight: bold;");
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            messageLabel.setText("⚠ Error checking registration status.");
+            messageLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+            return;
+        }
+
+        //Check if already in cart
+        if (util.CartManager.getCartItems().contains(selected)) {
             messageLabel.setText("⚠ Project is already in your cart!");
+            messageLabel.setStyle("-fx-text-fill: orange; -fx-font-weight: bold;");
             return;
         }
 
-        //Add project to the in memory cart only (no DB write yet)
-        CartManager.addToCart(selected);
+        //Add project to in memory cart only (no DB write yet)
+        util.CartManager.addToCart(selected);
         messageLabel.setText("✅ " + selected.getTitle() + " added to cart!");
-
-        //Quick visual feedback
         messageLabel.setStyle("-fx-text-fill: green; -fx-font-weight: bold;");
     }
-
 
     //Refresh project list in Dashboard
     @FXML
@@ -134,7 +157,39 @@ public class DashboardController {
     //Logout and return to the Login screen
     @FXML
     private void handleLogout() {
-        switchScene("/view/LoginView.fxml", "VolunTrack - Login");
+        //Ask for confirmation before logging out
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Confirm Logout");
+        confirm.setHeaderText("Are you sure you want to log out?");
+        confirm.setContentText("Your current session will end and you’ll return to the login screen.");
+
+        DialogPane pane = confirm.getDialogPane();
+        pane.setStyle("-fx-font-size: 13px;");
+
+        confirm.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                //Clear session data
+                util.Session.setCurrentUser(null);
+
+                //Return to login screen
+                try {
+                    javafx.stage.Stage stage = (javafx.stage.Stage) projectTable.getScene().getWindow();
+                    javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/view/Login.fxml"));
+                    javafx.scene.Scene scene = new javafx.scene.Scene(loader.load());
+                    stage.setScene(scene);
+                    stage.setTitle("VolunTrack - Login");
+
+                    //Fade out transition (because it looks cooler hehehe)
+                    javafx.animation.FadeTransition ft = new javafx.animation.FadeTransition(javafx.util.Duration.millis(300), scene.getRoot());
+                    ft.setFromValue(0);
+                    ft.setToValue(1);
+                    ft.play();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     //Navigate to Cart Screen
@@ -142,7 +197,6 @@ public class DashboardController {
     private void goToCart() {
         switchScene("/view/Cart.fxml", "VolunTrack - Cart");
     }
-
 
     //Generic method for switching between scenes
     private void switchScene(String fxmlPath, String title) {

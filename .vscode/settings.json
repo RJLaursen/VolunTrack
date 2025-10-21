@@ -1,12 +1,11 @@
 {
-    "java.project.sourcePaths": [
-        "src"
-    ],
+    "java.project.sourcePaths":["src", "test"],
     "java.project.outputPath": "bin",
     "java.project.referencedLibraries": [
         "lib\\slf4j-api-2.0.13.jar",
         "lib\\slf4j-simple-2.0.13.jar",
         "lib\\sqlite-jdbc-3.45.2.0.jar",
+        "lib\\junit-platform-console-standalone-1.10.0.jar",
         "c:\\Users\\rianj\\OneDrive\\Desktop\\FP_Assignment2_S4046283_Project\\FP_Assignment2_S4046283_Project\\lib\\javafx-sdk-21.0.8\\lib\\javafx.base.jar",
         "c:\\Users\\rianj\\OneDrive\\Desktop\\FP_Assignment2_S4046283_Project\\FP_Assignment2_S4046283_Project\\lib\\javafx-sdk-21.0.8\\lib\\javafx.swing.jar",
         "c:\\Users\\rianj\\OneDrive\\Desktop\\FP_Assignment2_S4046283_Project\\FP_Assignment2_S4046283_Project\\lib\\javafx-sdk-21.0.8\\lib\\javafx.graphics.jar",

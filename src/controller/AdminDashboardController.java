@@ -4,7 +4,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import model.Project;
 import model.ProjectDAO;
@@ -346,11 +345,5 @@ public class AdminDashboardController {
         a.setHeaderText("Input Error");
         a.showAndWait();
     }
-}
-
-    //Ensures consistent Title Case (e.g., "monday" → "Monday")
-    private static String capitalizeDay(String input) {
-        if (input == null || input.isEmpty()) return "";
-        return input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();
     }
 }

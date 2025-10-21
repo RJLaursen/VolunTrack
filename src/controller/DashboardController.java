@@ -7,8 +7,6 @@ import javafx.collections.ObservableList;
 
 import model.DatabaseManager;
 import model.Project;
-import model.RegistrationDAO;
-import util.CartManager;
 import util.Session;
 
 import java.sql.Connection;

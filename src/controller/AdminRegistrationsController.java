@@ -10,12 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.time.format.DateTimeFormatter;
-import java.time.ZonedDateTime;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 //Controller for the Admin Registrations view
 //Displays all user registrations including project details

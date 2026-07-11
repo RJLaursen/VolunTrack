@@ -22,3 +22,9 @@ build/
 # Ignore IDE-specific stuff
 *.iml
 .idea/
+
+# Maven
+target/
+
+# Database
+*.db

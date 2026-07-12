@@ -1,32 +1,198 @@
-<s4046283>, <Rian Joseph Delos Reyes Laursen>
+# VolunTrack
 
-A list of everything that has been done:
+A desktop volunteer management application built with **Java 21**, **JavaFX**, **SQLite**, and **Maven**. VolunTrack allows volunteers to browse and register for community projects, while providing administrators with tools to manage projects, registrations, and participation records.
 
-Y Database schema setup
-Y Singleton DatabaseManager
-Y Load projects.csv into database
-Y Print projects from DB
-Y Signup system
-Y Login system
-Y Password update and encryption
-Y User dashboard
-Y Project registration and validation
-Y Adjust project hours and slots
-Y Registration confirmation with code and date validation
-Y Participation history display
-Y Export participation history
-Y Admin dashboard
-Y Admin project management
-Y View all registrations for Admin
-Y Add and edit projects for Admin
-Y JUnit tests
+This project demonstrates object-oriented programming, MVC architecture, desktop application development, database integration, authentication, and automated testing.
 
-How to Run (Quick refresher note or guide):
-1. Open the project in VS Code with JavaFX support.
-2. Ensure JavaFX SDK and SQLite JDBC jars are in /lib.
-3. Run "App.java".
-4. The database (voluntrack.db) will auto generate if missing.
-5. Default admin login:
-   Username: admin
-   Password: Admin654!@
-   (Admin will automatically be created if there isnt one already)
+---
+
+## Features
+
+### Volunteer Features
+
+* Secure user registration and login
+* Password hashing using SHA-256
+* Browse available volunteer projects
+* Register for community projects
+* Registration confirmation and validation
+* View participation history
+* Export participation history to CSV
+* Update account password
+
+### Administrator Features
+
+* Secure administrator login
+* Create new volunteer projects
+* Edit existing projects
+* Enable or disable projects
+* View volunteer registrations
+* Manage project capacity and volunteer hours
+
+---
+
+## Technology Stack
+
+| Technology | Purpose                          |
+| ---------- | -------------------------------- |
+| Java 21    | Core application development     |
+| JavaFX     | Desktop graphical user interface |
+| SQLite     | Embedded relational database     |
+| Maven      | Dependency and build management  |
+| JUnit 5    | Unit testing                     |
+| SHA-256    | Password hashing                 |
+| Git        | Version control                  |
+
+---
+
+## Architecture
+
+VolunTrack follows the **Model-View-Controller (MVC)** design pattern.
+
+```text
+JavaFX Views (FXML)
+        │
+        ▼
+Controllers
+        │
+        ▼
+Models & Business Logic
+        │
+        ▼
+SQLite Database
+```
+
+The application separates the user interface, application logic, and data layer to improve maintainability and make future enhancements easier.
+
+---
+
+## Project Structure
+
+```text
+src
+├── main
+│   ├── java
+│   │   ├── controller
+│   │   ├── model
+│   │   ├── util
+│   │   └── App.java
+│   └── resources
+│       └── view
+└── test
+    └── java
+```
+
+Additional technical documentation is available in the `docs` directory.
+
+---
+
+## Installation
+
+### Prerequisites
+
+* Java Development Kit (JDK) 21
+* Apache Maven 3.9 or later
+
+### Clone the repository
+
+```bash
+git clone https://github.com/RJLaursen/VolunTrack.git
+cd VolunTrack
+```
+
+---
+
+## Running the Application
+
+Compile the project:
+
+```bash
+mvn clean compile
+```
+
+Launch the application:
+
+```bash
+mvn javafx:run
+```
+
+On first launch the application will:
+
+* Automatically create the SQLite database (`voluntrack.db`) if it does not already exist.
+* Import the default volunteer projects from `projects.csv`.
+* Create the default administrator account if one does not already exist.
+
+### Default Administrator Account
+
+**Username**
+
+```text
+admin
+```
+
+**Password**
+
+```text
+Admin654!@
+```
+
+---
+
+## Testing
+
+The project includes automated **JUnit 5** tests covering core application functionality.
+
+Run all tests using:
+
+```bash
+mvn test
+```
+
+---
+
+## Screenshots
+
+Screenshots of the application are available in the `docs/screenshots` directory.
+
+Suggested screenshots include:
+
+* Login screen
+* Volunteer dashboard
+* Project registration
+* Participation history
+* Administrator dashboard
+* Project management interface
+
+---
+
+## Future Improvements
+
+Potential future enhancements include:
+
+* Multiple administrator accounts with role-based permissions
+* Search and filtering for volunteer projects
+* Email confirmation for registrations
+* Dashboard analytics and reporting
+* REST API for web or mobile integration
+* Support for external database systems such as PostgreSQL
+
+---
+
+## Learning Outcomes
+
+This project provided practical experience with:
+
+* Object-oriented software development
+* JavaFX desktop application development
+* MVC software architecture
+* SQLite database integration
+* User authentication and password security
+* File import/export using CSV
+* Automated testing with JUnit
+* Dependency management using Maven
+* Version control with Git
+
+---
+
+## License
+
+This repository is provided for portfolio and educational purposes.

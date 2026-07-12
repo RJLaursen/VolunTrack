@@ -6,6 +6,48 @@ This project demonstrates object-oriented programming, MVC architecture, desktop
 
 ---
 
+## Screenshots
+
+### Login Screen
+
+The application begins with a secure login system supporting both volunteer users and administrators.
+
+<p align="center">
+  <img src="docs/screenshots/01-login.png" width="700">
+</p>
+
+---
+
+### Volunteer Dashboard
+
+The volunteer dashboard allows users to browse available community projects and manage their registrations.
+
+<p align="center">
+  <img src="docs/screenshots/02-volunteer-dashboard.png" width="700">
+</p>
+
+---
+
+### Project Registration
+
+Volunteers can register for available projects while specifying their participation details.
+
+<p align="center">
+  <img src="docs/screenshots/03-project-registration.png" width="700">
+</p>
+
+---
+
+### Administrator Dashboard
+
+Administrators have access to project management tools, registration oversight, and system administration features.
+
+<p align="center">
+  <img src="docs/screenshots/05-admin-dashboard.png" width="700">
+</p>
+
+---
+
 ## Features
 
 ### Volunteer Features
@@ -146,21 +188,6 @@ Run all tests using:
 ```bash
 mvn test
 ```
-
----
-
-## Screenshots
-
-Screenshots of the application are available in the `docs/screenshots` directory.
-
-Suggested screenshots include:
-
-* Login screen
-* Volunteer dashboard
-* Project registration
-* Participation history
-* Administrator dashboard
-* Project management interface
 
 ---
 
